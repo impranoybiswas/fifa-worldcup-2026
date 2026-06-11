@@ -34,7 +34,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${bebasNeue.variable}`}>
-      <body className="min-h-screen font-inter antialiased">{children}</body>
+      <body className="font-inter antialiased">{children}</body>
     </html>
   );
 }

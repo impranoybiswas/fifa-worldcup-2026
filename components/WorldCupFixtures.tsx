@@ -21,10 +21,19 @@ export default function WorldCupFixtures() {
     const savedPos = localStorage.getItem(scrollKey);
     if (savedPos) {
       scrollPosRef.current = parseInt(savedPos, 10);
-      // DOM পুরোপুরি রেডি হওয়ার জন্য সামান্য ডিলে
-      setTimeout(() => {
+
+      // মোবাইলের স্লো রেন্ডারিং ব্যাকআপের জন্য একাধিক ট্রাই করা (পোলিং ট্রিক)
+      const tryScroll = (attempts = 0) => {
         window.scrollTo({ top: scrollPosRef.current, behavior: "instant" });
-      }, 100);
+
+        // যদি স্ক্রোল পজিশন সফলভাবে সেট না হয় এবং ৩ বারের কম ট্রাই করা হয়ে থাকে
+        if (window.scrollY < scrollPosRef.current && attempts < 3) {
+          setTimeout(() => tryScroll(attempts + 1), 150);
+        }
+      };
+
+      // প্রথম রান
+      setTimeout(() => tryScroll(), 250); // ২৫০ মিলিমেকেন্ড সেফ ডিলে
     }
 
     const handleScroll = () => {
@@ -32,6 +41,7 @@ export default function WorldCupFixtures() {
       localStorage.setItem(scrollKey, window.scrollY.toString());
     };
 
+    // মোবাইলের টাচ স্ক্রোলের জন্য touchmove ও যোগ করে দেওয়া সেফ
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);

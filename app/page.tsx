@@ -2,7 +2,7 @@ import WorldCupFixtures from "@/components/WorldCupFixtures";
 
 export default function Home() {
   return (
-    <main className="min-h-screen pb-20">
+    <main className="pb-20">
       {/* Premium Header */}
       <div className="relative overflow-hidden pt-20 pb-16 px-6">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-64 bg-blue-500/10 blur-[120px] -z-10" />
