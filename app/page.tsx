@@ -15,8 +15,9 @@ export default function Home() {
             </span>
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-tight">
-            World Cup <span className="gradient-text">2026</span>
+          <h1 className="text-5xl md:text-5xl font-black mb-6 tracking-tight">
+            Borno&apos;s Fifa World Cup Fixture{" "}
+            <span className="gradient-text">2026</span>
           </h1>
 
           <p className="text-slate-400 text-lg max-w-2xl mx-auto font-medium">
@@ -28,13 +29,6 @@ export default function Home() {
 
       {/* Fixtures Section */}
       <div className="max-w-5xl mx-auto px-6">
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-xl font-bold uppercase tracking-widest text-slate-500">
-            Upcoming Fixtures
-          </h2>
-          <div className="h-px flex-1 mx-6 bg-white/5" />
-        </div>
-
         <WorldCupFixtures />
       </div>
 
