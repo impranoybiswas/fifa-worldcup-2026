@@ -33,8 +33,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${bebasNeue.variable}`}>
-      <body className="font-inter antialiased">{children}</body>
+    <html lang="en" className={`${inter.variable} ${bebasNeue.variable} scroll-smooth`}>
+      <body className="min-h-dvh font-inter antialiased">{children}</body>
     </html>
   );
 }
