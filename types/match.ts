@@ -32,4 +32,9 @@ export interface Match {
       away: number | null;
     };
   };
+  referees?: {
+    name: string;
+    nationality: string;
+    role: string;
+  }[];
 }
