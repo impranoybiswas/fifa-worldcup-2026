@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Bebas_Neue } from "next/font/google";
 import "./globals.css";
+import AOSInitializer from "@/components/AOSInitializer";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -33,8 +34,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${bebasNeue.variable} scroll-smooth`}>
-      <body className="min-h-dvh font-inter antialiased">{children}</body>
+    <html
+      lang="en"
+      className={`${inter.variable} ${bebasNeue.variable} scroll-smooth`}
+    >
+      <body className="min-h-dvh font-inter antialiased">
+        <AOSInitializer />
+        {children}
+      </body>
     </html>
   );
 }

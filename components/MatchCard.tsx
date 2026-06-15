@@ -4,12 +4,14 @@ import { teamInBangla } from "@/lib/team-bangla";
 import { banglaDate, banglaTime } from "@/lib/bangla-date";
 import { Match } from "@/types/match";
 import Image from "next/image";
+import { Calendar, Clock, Trophy, Users, UserCheck } from "lucide-react";
 
 export default function MatchCard({ match }: { match: Match }) {
   // Safety check — bail early if match data is missing
   if (!match || (!match.homeTeam?.name && !match.awayTeam?.name)) return null;
 
-  const { homeTeam, awayTeam, status, utcDate, stage, group, score, referees } = match;
+  const { homeTeam, awayTeam, status, utcDate, stage, group, score, referees } =
+    match;
 
   // Match state flags
   const isLive = status === "IN_PLAY" || status === "PAUSED";
@@ -35,128 +37,146 @@ export default function MatchCard({ match }: { match: Match }) {
 
   // Formatted stage string — e.g. "GROUP_STAGE" → "Group stage"
   const stageLabel = stage
-    ? stage.replace(/_/g, " ").toLowerCase().replace(/^\w/, (c) => c.toUpperCase())
+    ? stage
+        .replace(/_/g, " ")
+        .toLowerCase()
+        .replace(/^\w/, (c) => c.toUpperCase())
     : "World Cup";
 
   return (
-    <div className="w-full max-w-sm mx-auto bg-white border border-black/6 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200">
-
-      {/* ── Top meta row: stage / group · date & time · status badge ── */}
-      <div className="flex items-center justify-between gap-2 px-4 py-2.5 border-b border-black/5">
-        {/* Stage & group */}
-        <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 truncate">
-          {stageLabel}
-          {group && ` · ${group.replace(/_/g, " ")}`}
-        </span>
-
-        {/* Date · time */}
-        <span className="text-[10px] text-slate-400 whitespace-nowrap tabular-nums shrink-0">
-          {banglaDate(utcDate)} · {banglaTime(utcDate)}
-        </span>
+    <div
+      data-aos="fade-up"
+      className="group relative w-full max-w-[400px] mx-auto bg-white dark:bg-zinc-900 border border-slate-100 dark:border-white/5 rounded-2xl overflow-hidden hover:shadow-xl hover:border-blue-500/20 transition-all duration-500"
+    >
+      {/* Top Meta Row */}
+      <div className="flex items-center justify-between px-4 py-3 bg-slate-50/50 dark:bg-white/2 border-b border-slate-100 dark:border-white/5">
+        <div className="flex items-center gap-2">
+          <Trophy className="w-3.5 h-3.5 text-blue-500" />
+          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            {stageLabel} {group && `· ${group.replace(/_/g, " ")}`}
+          </span>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 text-slate-400">
+            <Calendar className="w-3 h-3" />
+            <span className="text-[10px] font-medium tabular-nums">
+              {banglaDate(utcDate)}
+            </span>
+          </div>
+          <div className="flex items-center gap-1.5 text-slate-400">
+            <Clock className="w-3 h-3" />
+            <span className="text-[10px] font-medium tabular-nums">
+              {banglaTime(utcDate)}
+            </span>
+          </div>
+        </div>
       </div>
 
-      {/* ── Scoreboard: home | score/vs | away ── */}
-      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 px-4 py-4">
-
-        {/* Home team */}
-        <TeamColumn
+      {/* Main Scoreboard Area */}
+      <div className="px-6 py-6 flex items-center justify-between gap-4">
+        {/* Home Team */}
+        <TeamDisplay
           team={homeTeam}
           isWinner={homeWins}
           isLoser={isFinished && !homeWins}
-          isLive={isLive}
         />
 
-        {/* Center: score or VS + status */}
-        <div className="flex flex-col items-center gap-1.5">
+        {/* Score / Status */}
+        <div className="flex flex-col items-center justify-center min-w-[80px]">
           {isScheduled ? (
-            <span className="text-xl font-semibold text-slate-200 tracking-wider">VS</span>
+            <div className="text-2xl font-black text-slate-100 dark:text-white/5 tracking-tighter select-none">
+              VS
+            </div>
           ) : (
-            <div className="flex items-baseline gap-2 tabular-nums">
-              <span className={`text-3xl font-semibold leading-none ${homeWins ? "text-emerald-600" : "text-slate-800"}`}>
+            <div className="flex items-center gap-2">
+              <span
+                className={`text-4xl font-black tracking-tighter tabular-nums ${homeWins ? "text-emerald-500" : "text-slate-800 dark:text-slate-100"}`}
+              >
                 {homeScore}
               </span>
-              <span className="text-lg text-slate-200 font-light">:</span>
-              <span className={`text-3xl font-semibold leading-none ${awayWins ? "text-emerald-600" : "text-slate-800"}`}>
+              <span className="text-xl font-light text-slate-200">:</span>
+              <span
+                className={`text-4xl font-black tracking-tighter tabular-nums ${awayWins ? "text-emerald-500" : "text-slate-800 dark:text-slate-100"}`}
+              >
                 {awayScore}
               </span>
             </div>
           )}
-
-          {/* Status badge */}
-          <StatusBadge label={statusLabel} isLive={isLive} isScheduled={isScheduled} />
+          <StatusBadge
+            label={statusLabel}
+            isLive={isLive}
+            isScheduled={isScheduled}
+          />
         </div>
 
-        {/* Away team */}
-        <TeamColumn
+        {/* Away Team */}
+        <TeamDisplay
           team={awayTeam}
           isWinner={awayWins}
           isLoser={isFinished && !awayWins}
-          isLive={isLive}
         />
       </div>
 
-      {/* ── Footer: referee info (optional) ── */}
+      {/* Referee Footer */}
       {referees && referees.length > 0 && (
-        <div className="flex items-center justify-center gap-1 px-4 py-2 border-t border-black/5 text-[10px] text-slate-400">
-          <span>Ref:</span>
-          <span className="text-slate-500 font-medium">{referees[0].name}</span>
-          {referees[0].nationality && (
-            <span className="text-slate-300">({referees[0].nationality})</span>
-          )}
+        <div className="px-4 py-2 bg-slate-50/30 dark:bg-white/1 border-t border-slate-100 dark:border-white/5 flex items-center justify-center gap-2">
+          <UserCheck className="w-3 h-3 text-slate-300" />
+          <span className="text-[9px] font-medium text-slate-400">
+            Match Referee:{" "}
+          </span>
+          <span className="text-[9px] font-bold text-slate-500 dark:text-slate-300">
+            {referees[0].name}{" "}
+            {referees[0].nationality && `(${referees[0].nationality})`}
+          </span>
         </div>
       )}
     </div>
   );
 }
 
-// ── Team column: flag + name + optional winner badge ──────────────────────────
-function TeamColumn({
+function TeamDisplay({
   team,
   isWinner,
   isLoser,
-  isLive,
 }: {
-  team: Match["homeTeam"] | Match["awayTeam"];
+  team: Match["homeTeam"];
   isWinner: boolean;
   isLoser: boolean;
-  isLive: boolean;
 }) {
   return (
-    <div className={`flex flex-col items-center gap-1.5 transition-opacity duration-300 ${isLoser ? "opacity-35" : "opacity-100"}`}>
-      {/* Flag / crest */}
-      <div className="w-14 h-9 rounded-lg border border-black/6 bg-slate-50 flex items-center justify-center overflow-hidden shrink-0">
+    <div
+      className={`flex flex-col items-center gap-2 flex-1 min-w-0 ${isLoser ? "opacity-40" : "opacity-100"} transition-all duration-300`}
+    >
+      <div className="relative w-14 h-9 overflow-hidden rounded-lg border border-slate-100 dark:border-white/5 bg-slate-50 dark:bg-white/5 grid place-items-center group-hover:scale-105 transition-transform">
         {team.crest ? (
           <Image
             src={team.crest}
             alt={team.name}
-            width={56}
-            height={36}
-            className="object-cover w-full h-full"
-            priority={isLive}
+            fill
+            className="object-cover"
+            sizes="56px"
           />
         ) : (
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+          <span className="text-[10px] font-black text-slate-300 uppercase">
             {team.tla || "?"}
           </span>
         )}
       </div>
-
-      {/* Team name */}
-      <p className={`text-[11px] font-semibold text-center leading-tight px-1 truncate w-full ${isWinner ? "text-emerald-600" : "text-slate-700"}`}>
+      <span
+        className={`text-[11px] font-bold truncate w-full text-center tracking-tight ${isWinner ? "text-emerald-500" : "text-slate-700 dark:text-slate-200"}`}
+      >
         {teamInBangla(team.name)}
-      </p>
-
-      {/* Winner badge — only shown for the winning side */}
+      </span>
       {isWinner && (
-        <span className="text-[9px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full uppercase tracking-wide">
+        <div className="hidden items-center gap-1 text-[8px] font-black uppercase text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 px-1.5 py-0.5 rounded-md">
+          <Users className="w-2 h-2" />
           Winner
-        </span>
+        </div>
       )}
     </div>
   );
 }
 
-// ── Status badge with live pulse animation ────────────────────────────────────
 function StatusBadge({
   label,
   isLive,
@@ -166,18 +186,18 @@ function StatusBadge({
   isLive: boolean;
   isScheduled: boolean;
 }) {
-  const base = "inline-flex items-center gap-1 text-[9px] font-semibold uppercase tracking-widest px-2.5 py-0.5 rounded-full border";
-
-  const variant = isLive
-    ? `${base} bg-red-50 text-red-600 border-red-200`
-    : isScheduled
-      ? `${base} bg-blue-50 text-blue-500 border-blue-200`
-      : `${base} bg-slate-50 text-slate-400 border-slate-200`;
-
   return (
-    <span className={variant}>
-      {isLive && <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />}
+    <div
+      className={`mt-2 flex items-center gap-1.5 px-2 py-0.5 rounded-full border text-[9px] font-black uppercase tracking-wider ${
+        isLive
+          ? "bg-red-50 text-red-500 border-red-100 animate-pulse"
+          : isScheduled
+            ? "bg-blue-50 text-blue-500 border-blue-100"
+            : "bg-slate-50 text-slate-400 border-slate-100"
+      }`}
+    >
+      {isLive && <span className="w-1 h-1 rounded-full bg-red-500" />}
       {label}
-    </span>
+    </div>
   );
 }

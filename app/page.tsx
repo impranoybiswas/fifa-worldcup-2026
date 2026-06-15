@@ -1,4 +1,5 @@
 import WorldCupFixtures from "@/components/WorldCupFixtures";
+import { Radio } from "lucide-react";
 
 export default function Home() {
   return (
@@ -8,19 +9,30 @@ export default function Home() {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-64 bg-blue-500/10 blur-[120px] -z-10" />
 
         <div className="max-w-5xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 mb-6">
-            <span className="live-indicator" />
+          <div
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 mb-6"
+            data-aos="zoom-in"
+          >
+            <Radio className="w-3 h-3 text-blue-500 animate-pulse" />
             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400">
               Real-time Updates
             </span>
           </div>
 
-          <h1 className="text-5xl md:text-5xl font-black mb-6 tracking-tight">
+          <h1
+            className="text-5xl md:text-5xl font-black mb-6 tracking-tight"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
             Borno&apos;s Fifa World Cup Fixture{" "}
             <span className="gradient-text">2026</span>
           </h1>
 
-          <p className="text-slate-400 text-lg max-w-2xl mx-auto font-medium">
+          <p
+            className="text-slate-400 text-lg max-w-2xl mx-auto font-medium"
+            data-aos="fade-up"
+            data-aos-delay="400"
+          >
             Follow the journey of 48 nations across North America. Real-time
             fixtures, scores, and results in one place.
           </p>
@@ -33,7 +45,10 @@ export default function Home() {
       </div>
 
       {/* Simple Footer */}
-      <footer className="mt-20 text-center text-slate-600 text-xs uppercase tracking-widest font-bold">
+      <footer
+        className="mt-20 text-center text-slate-600 text-xs uppercase tracking-widest font-bold"
+        data-aos="fade-up"
+      >
         FIFA World Cup 2026 · USA · CANADA · MEXICO
       </footer>
     </main>

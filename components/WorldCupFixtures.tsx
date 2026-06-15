@@ -5,6 +5,7 @@ import useSWR from "swr";
 import { Match } from "@/types/match";
 import MatchCard from "./MatchCard";
 import { teamInBangla } from "@/lib/team-bangla";
+import { Search, Loader2, Info } from "lucide-react";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 const SCROLL_KEY = "worldcup_scroll_pos";
@@ -95,13 +96,15 @@ export default function WorldCupFixtures() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center py-32 gap-6">
+      <div
+        className="flex flex-col items-center justify-center py-32 gap-6"
+        data-aos="zoom-in"
+      >
         <div className="relative flex h-16 w-16 items-center justify-center">
-          <div className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-500/20 opacity-75" />
-          <div className="h-12 w-12 rounded-full border-[3px] border-white/5 border-t-blue-500 animate-spin" />
+          <Loader2 className="h-10 w-10 text-blue-500 animate-spin" />
         </div>
         <div className="flex flex-col items-center gap-1">
-          <p className="text-xs font-black uppercase tracking-[0.4em] text-foreground/60 animate-pulse">
+          <p className="text-xs font-black uppercase tracking-[0.4em] text-foreground/60">
             Syncing Fixtures
           </p>
           <p className="text-[10px] text-foreground/40">
@@ -114,7 +117,11 @@ export default function WorldCupFixtures() {
 
   if (error || !matches || !Array.isArray(matches) || matches.length === 0) {
     return (
-      <div className="relative overflow-hidden rounded-2xl border border-white/5 bg-white/2 p-16 text-center backdrop-blur-md">
+      <div
+        className="relative overflow-hidden rounded-2xl border border-white/5 bg-white/2 p-16 text-center backdrop-blur-md"
+        data-aos="fade-up"
+      >
+        <Info className="w-8 h-8 text-slate-400 mx-auto mb-4 opacity-50" />
         <p className="relative z-10 text-foreground/50 font-bold uppercase tracking-widest text-xs">
           কোনো ম্যাচ পাওয়া যায়নি বা সার্ভার ত্রুটি
         </p>
@@ -125,7 +132,7 @@ export default function WorldCupFixtures() {
   return (
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-1">
-        <div className="flex flex-col">
+        <div className="flex flex-col" data-aos="fade-right">
           <h2 className="text-xl font-bold tracking-tight">
             সব ম্যাচের সময়সূচী
           </h2>
@@ -134,29 +141,40 @@ export default function WorldCupFixtures() {
           </p>
         </div>
 
-        <div className="relative group w-full md:w-auto">
+        <div className="relative group w-full md:w-auto" data-aos="fade-left">
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-40">
+            <Search className="w-4 h-4" />
+          </div>
           <select
             value={selectedTeam}
             onChange={(e) => setSelectedTeam(e.target.value)}
-            className="w-full md:w-auto appearance-none cursor-pointer
-              bg-white dark:bg-zinc-900
-              border border-black/5 dark:border-white/10
-              rounded-2xl px-5 py-3 pr-12
+            className="w-full md:w-80 appearance-none cursor-pointer
+              bg-white dark:bg-zinc-900/50
+              border border-slate-100 dark:border-white/5
+              rounded-2xl pl-12 pr-12 py-3
               text-sm font-bold shadow-sm
               transition-all duration-300
-              hover:shadow-lg hover:border-primary/30
-              focus:ring-2 focus:ring-primary/20 focus:outline-none"
+              hover:shadow-md hover:border-blue-500/30
+              focus:ring-2 focus:ring-blue-500/10 focus:outline-none"
           >
-            <option value="all">সব দল (All Teams)</option>
+            <option value="all">ফিল্টার করুন (All Teams)</option>
             {teams.map((team) => (
               <option key={team} value={team}>
                 {teamInBangla(team)} ({team})
               </option>
             ))}
           </select>
-          <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+          <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-30 group-hover:opacity-100 transition-opacity">
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="m6 9 6 6 6-6" />
             </svg>
           </div>
