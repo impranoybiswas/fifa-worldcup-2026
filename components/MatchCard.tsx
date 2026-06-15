@@ -6,192 +6,178 @@ import { Match } from "@/types/match";
 import Image from "next/image";
 
 export default function MatchCard({ match }: { match: Match }) {
-  // ১. সেফটি চেক
+  // Safety check — bail early if match data is missing
   if (!match || (!match.homeTeam?.name && !match.awayTeam?.name)) return null;
 
-  const { homeTeam, awayTeam, status, utcDate, stage, group, score, referees } =
-    match;
+  const { homeTeam, awayTeam, status, utcDate, stage, group, score, referees } = match;
 
-  // ২. ম্যাচের বর্তমান অবস্থা বা স্ট্যাটাস ফ্ল্যাগস
+  // Match state flags
   const isLive = status === "IN_PLAY" || status === "PAUSED";
   const isFinished = status === "FINISHED";
   const isScheduled = status === "TIMED" || status === "SCHEDULED";
 
-  // ৩. স্কোরের সেফ হ্যান্ডলিং
+  // Safe score extraction
   const homeScore = score?.fullTime?.home ?? 0;
   const awayScore = score?.fullTime?.away ?? 0;
 
-  // ৪. উইনার হাইলাইট লজিক
+  // Winner logic — only meaningful after full time
   const homeWins = isFinished && homeScore > awayScore;
   const awayWins = isFinished && awayScore > homeScore;
-  const isDraw = isFinished && homeScore === awayScore;
 
-  // ৫. ডাইনামিক বাংলা স্ট্যাটাস লেবেল নির্ধারণ
+  // Human-readable status label
   const statusLabel = isLive
     ? status === "PAUSED"
-      ? "মধ্য বিরতি"
-      : "লাইভ"
+      ? "Half time"
+      : "Live"
     : isFinished
-      ? "শেষ"
-      : "শুরু হবে";
+      ? "Full time"
+      : "Upcoming";
+
+  // Formatted stage string — e.g. "GROUP_STAGE" → "Group stage"
+  const stageLabel = stage
+    ? stage.replace(/_/g, " ").toLowerCase().replace(/^\w/, (c) => c.toUpperCase())
+    : "World Cup";
 
   return (
-    <div className="w-full max-w-xl mx-auto p-4 sm:p-5 border border-black/6 rounded-2xl bg-white/90 backdrop-blur-md flex flex-col gap-5 shadow-md hover:shadow-lg transition-all duration-300">
-      {/* টপ সেকশন: ম্যাচ মেটাডেটা (স্টেজ, তারিখ, সময় ও রেফারি) */}
-      <div className="border-b border-black/5 pb-4 flex flex-col items-center justify-center gap-2">
-        {/* টুর্নামেন্ট স্টেজ ও গ্রুপ */}
-        <div className="flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-500">
-          <span className="bg-slate-100 px-2 py-0.5 rounded">
-            {stage?.replace(/_/g, " ") || "WORLD CUP"}
-          </span>
-          {group && (
-            <>
-              <span className="text-slate-300">•</span>
-              <span className="bg-slate-100 px-2 py-0.5 rounded">
-                {group.replace(/_/g, " ")}
+    <div className="w-full max-w-sm mx-auto bg-white border border-black/6 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200">
+
+      {/* ── Top meta row: stage / group · date & time · status badge ── */}
+      <div className="flex items-center justify-between gap-2 px-4 py-2.5 border-b border-black/5">
+        {/* Stage & group */}
+        <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 truncate">
+          {stageLabel}
+          {group && ` · ${group.replace(/_/g, " ")}`}
+        </span>
+
+        {/* Date · time */}
+        <span className="text-[10px] text-slate-400 whitespace-nowrap tabular-nums shrink-0">
+          {banglaDate(utcDate)} · {banglaTime(utcDate)}
+        </span>
+      </div>
+
+      {/* ── Scoreboard: home | score/vs | away ── */}
+      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 px-4 py-4">
+
+        {/* Home team */}
+        <TeamColumn
+          team={homeTeam}
+          isWinner={homeWins}
+          isLoser={isFinished && !homeWins}
+          isLive={isLive}
+        />
+
+        {/* Center: score or VS + status */}
+        <div className="flex flex-col items-center gap-1.5">
+          {isScheduled ? (
+            <span className="text-xl font-semibold text-slate-200 tracking-wider">VS</span>
+          ) : (
+            <div className="flex items-baseline gap-2 tabular-nums">
+              <span className={`text-3xl font-semibold leading-none ${homeWins ? "text-emerald-600" : "text-slate-800"}`}>
+                {homeScore}
               </span>
-            </>
+              <span className="text-lg text-slate-200 font-light">:</span>
+              <span className={`text-3xl font-semibold leading-none ${awayWins ? "text-emerald-600" : "text-slate-800"}`}>
+                {awayScore}
+              </span>
+            </div>
+          )}
+
+          {/* Status badge */}
+          <StatusBadge label={statusLabel} isLive={isLive} isScheduled={isScheduled} />
+        </div>
+
+        {/* Away team */}
+        <TeamColumn
+          team={awayTeam}
+          isWinner={awayWins}
+          isLoser={isFinished && !awayWins}
+          isLive={isLive}
+        />
+      </div>
+
+      {/* ── Footer: referee info (optional) ── */}
+      {referees && referees.length > 0 && (
+        <div className="flex items-center justify-center gap-1 px-4 py-2 border-t border-black/5 text-[10px] text-slate-400">
+          <span>Ref:</span>
+          <span className="text-slate-500 font-medium">{referees[0].name}</span>
+          {referees[0].nationality && (
+            <span className="text-slate-300">({referees[0].nationality})</span>
           )}
         </div>
-
-        {/* বাংলা তারিখ ও সময় ক্যাপসুল */}
-        <div className="flex items-center gap-2 text-xs text-slate-700 font-bold bg-slate-100/80 border border-slate-200/50 px-3.5 py-1 rounded-full tabular-nums shadow-sm">
-          <span>{banglaDate(utcDate)}</span>
-          <span className="text-slate-300">•</span>
-          <span>{banglaTime(utcDate)}</span>
-        </div>
-
-        {/* রেফারি ইনফরমেশন */}
-        {referees && referees.length > 0 && (
-          <div className="text-[10px] text-slate-400 font-medium tracking-wide">
-            Referee:{" "}
-            <span className="text-slate-600 font-semibold">
-              {referees[0].name || "N/A"}
-            </span>{" "}
-            ({referees[0].nationality || "N/A"})
-          </div>
-        )}
-      </div>
-
-      {/* বটম সেকশন: মূল গ্রিড স্কোরবোর্ড (৩ কলাম লেআউট) */}
-      <div className="relative">
-        <div className="grid grid-cols-3 items-center justify-center gap-3 sm:gap-4">
-          {/* কলাম ১: হোম টিম কার্ড */}
-          <div
-            className={`relative flex flex-col items-center rounded-xl border p-3 pt-4 gap-2 transition-all duration-300 h-full justify-between
-              ${homeWins ? "bg-emerald-50/40 border-emerald-500/20 shadow-sm ring-1 ring-emerald-500/10" : "bg-slate-50/50 border-black/4"}
-              ${isFinished && !homeWins && !isDraw ? "opacity-40 filter grayscale-15" : ""}
-            `}
-          >
-            {/* উইনার ব্যাজ */}
-            {homeWins && (
-              <span className="absolute -top-2.5 bg-emerald-500 text-white text-[8px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
-                ✓ জয়ী
-              </span>
-            )}
-
-            <TeamFlag team={homeTeam} isLive={isLive} />
-
-            <p
-              className={`text-[10px] sm:text-sm w-full text-center truncate tracking-tight px-1 mt-1 ${homeWins ? "text-emerald-600 font-extrabold" : "text-slate-800 font-semibold"}`}
-            >
-              {teamInBangla(homeTeam.name)}
-            </p>
-          </div>
-
-          {/* কলাম ২: লাইভ স্কোর বা বনাম (VS) ডিসপ্লে */}
-          <div className="flex flex-col items-center justify-center tabular-nums">
-            {isScheduled ? (
-              <span className="text-2xl font-black tracking-widest text-slate-300 font-sans">
-                VS
-              </span>
-            ) : (
-              <div className="flex gap-2.5 items-center tracking-tighter text-3xl sm:text-4xl font-extrabold text-slate-900">
-                <span className={homeWins ? "text-emerald-600" : ""}>
-                  {homeScore}
-                </span>
-                <span className="text-xl opacity-20 text-slate-400 font-light">
-                  :
-                </span>
-                <span className={awayWins ? "text-emerald-600" : ""}>
-                  {awayScore}
-                </span>
-              </div>
-            )}
-
-            {/* ডাইনামিক স্ট্যাটাস ব্যাজ */}
-            <div
-              className={`
-                inline-flex items-center gap-1.5 rounded-full px-3 py-0.5
-                text-[9px] font-extrabold uppercase tracking-wider mt-3 shadow-xs border
-                ${
-                  isLive
-                    ? "bg-red-500 text-white border-red-600 animate-pulse"
-                    : isScheduled
-                      ? "bg-blue-50/80 text-blue-600 border-blue-200/60"
-                      : "bg-slate-100 text-slate-600 border-slate-200"
-                }
-              `}
-            >
-              {isLive && (
-                <span className="w-1 h-1 rounded-full bg-white animate-ping" />
-              )}
-              {statusLabel}
-            </div>
-          </div>
-
-          {/* কলাম ৩: অ্যাওয়ে টিম কার্ড */}
-          <div
-            className={`relative flex flex-col items-center rounded-xl border p-3 pt-4 gap-2 transition-all duration-300 h-full justify-between
-              ${awayWins ? "bg-emerald-50/40 border-emerald-500/20 shadow-sm ring-1 ring-emerald-500/10" : "bg-slate-50/50 border-black/4"}
-              ${isFinished && !awayWins && !isDraw ? "opacity-40 filter grayscale-15" : ""}
-            `}
-          >
-            {/* উইনার ব্যাজ */}
-            {awayWins && (
-              <span className="absolute -top-2.5 bg-emerald-500 text-white text-[8px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
-                ✓ জয়ী
-              </span>
-            )}
-
-            <TeamFlag team={awayTeam} isLive={isLive} />
-
-            <p
-              className={`text-[10px] sm:text-sm w-full text-center truncate tracking-tight px-1 mt-1 ${awayWins ? "text-emerald-600 font-extrabold" : "text-slate-800 font-semibold"}`}
-            >
-              {teamInBangla(awayTeam.name)}
-            </p>
-          </div>
-        </div>
-      </div>
+      )}
     </div>
   );
 }
 
-// ফ্ল্যাগের জন্য ক্লিন রি-ইউজেবল সাব-কম্পোনেন্ট
-function TeamFlag({
+// ── Team column: flag + name + optional winner badge ──────────────────────────
+function TeamColumn({
   team,
+  isWinner,
+  isLoser,
   isLive,
 }: {
   team: Match["homeTeam"] | Match["awayTeam"];
+  isWinner: boolean;
+  isLoser: boolean;
   isLive: boolean;
 }) {
   return (
-    <div className="border border-black/6 shadow-xs w-16 h-10 sm:w-20 sm:h-12 rounded-lg overflow-hidden bg-slate-100/70 flex items-center justify-center shrink-0">
-      {team.crest ? (
-        <Image
-          src={team.crest}
-          alt={team.name}
-          height={80}
-          width={120}
-          className="object-cover w-full h-full transition-transform duration-300 hover:scale-105"
-          priority={isLive}
-        />
-      ) : (
-        <span className="font-extrabold text-sm sm:text-base text-slate-500 uppercase tracking-wider">
-          {team.tla || "?"}
+    <div className={`flex flex-col items-center gap-1.5 transition-opacity duration-300 ${isLoser ? "opacity-35" : "opacity-100"}`}>
+      {/* Flag / crest */}
+      <div className="w-14 h-9 rounded-lg border border-black/6 bg-slate-50 flex items-center justify-center overflow-hidden shrink-0">
+        {team.crest ? (
+          <Image
+            src={team.crest}
+            alt={team.name}
+            width={56}
+            height={36}
+            className="object-cover w-full h-full"
+            priority={isLive}
+          />
+        ) : (
+          <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+            {team.tla || "?"}
+          </span>
+        )}
+      </div>
+
+      {/* Team name */}
+      <p className={`text-[11px] font-semibold text-center leading-tight px-1 truncate w-full ${isWinner ? "text-emerald-600" : "text-slate-700"}`}>
+        {teamInBangla(team.name)}
+      </p>
+
+      {/* Winner badge — only shown for the winning side */}
+      {isWinner && (
+        <span className="text-[9px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full uppercase tracking-wide">
+          Winner
         </span>
       )}
     </div>
+  );
+}
+
+// ── Status badge with live pulse animation ────────────────────────────────────
+function StatusBadge({
+  label,
+  isLive,
+  isScheduled,
+}: {
+  label: string;
+  isLive: boolean;
+  isScheduled: boolean;
+}) {
+  const base = "inline-flex items-center gap-1 text-[9px] font-semibold uppercase tracking-widest px-2.5 py-0.5 rounded-full border";
+
+  const variant = isLive
+    ? `${base} bg-red-50 text-red-600 border-red-200`
+    : isScheduled
+      ? `${base} bg-blue-50 text-blue-500 border-blue-200`
+      : `${base} bg-slate-50 text-slate-400 border-slate-200`;
+
+  return (
+    <span className={variant}>
+      {isLive && <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />}
+      {label}
+    </span>
   );
 }
