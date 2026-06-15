@@ -40,7 +40,7 @@ export default function Home() {
       </div>
 
       {/* Fixtures Section */}
-      <div className="max-w-5xl mx-auto px-6">
+      <div className="max-w-5xl mx-auto px-4">
         <WorldCupFixtures />
       </div>
 

@@ -5,7 +5,7 @@ import useSWR from "swr";
 import { Match } from "@/types/match";
 import MatchCard from "./MatchCard";
 import { teamInBangla } from "@/lib/team-bangla";
-import { Search, Loader2, Info } from "lucide-react";
+import { Search, Loader2, Info, ArrowDownIcon } from "lucide-react";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 const SCROLL_KEY = "worldcup_scroll_pos";
@@ -165,18 +165,7 @@ export default function WorldCupFixtures() {
             ))}
           </select>
           <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-30 group-hover:opacity-100 transition-opacity">
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="3"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="m6 9 6 6 6-6" />
-            </svg>
+           <ArrowDownIcon className="w-4 h-4"/>
           </div>
         </div>
       </div>

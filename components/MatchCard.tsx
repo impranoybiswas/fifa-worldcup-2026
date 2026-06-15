@@ -46,26 +46,26 @@ export default function MatchCard({ match }: { match: Match }) {
   return (
     <div
       data-aos="fade-up"
-      className="group relative w-full max-w-[400px] mx-auto bg-white dark:bg-zinc-900 border border-slate-100 dark:border-white/5 rounded-2xl overflow-hidden hover:shadow-xl hover:border-blue-500/20 transition-all duration-500"
+      className="group relative w-full mx-auto bg-white dark:bg-zinc-900 border border-slate-100 dark:border-white/5 rounded-2xl overflow-hidden hover:shadow-xl hover:border-blue-500/20 transition-all duration-500"
     >
       {/* Top Meta Row */}
       <div className="flex items-center justify-between px-4 py-3 bg-slate-50/50 dark:bg-white/2 border-b border-slate-100 dark:border-white/5">
         <div className="flex items-center gap-2">
-          <Trophy className="w-3.5 h-3.5 text-blue-500" />
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+          <Trophy className="size-3 text-blue-500" />
+          <span className="text-[8px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
             {stageLabel} {group && `· ${group.replace(/_/g, " ")}`}
           </span>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 text-slate-400">
+        <div className="flex items-center gap-3 text-slate-700 font-bold">
+          <div className="flex items-center gap-1.5 ">
             <Calendar className="w-3 h-3" />
-            <span className="text-[10px] font-medium tabular-nums">
+            <span className="text-[10px] tabular-nums ">
               {banglaDate(utcDate)}
             </span>
           </div>
-          <div className="flex items-center gap-1.5 text-slate-400">
+          <div className="flex items-center gap-1.5">
             <Clock className="w-3 h-3" />
-            <span className="text-[10px] font-medium tabular-nums">
+            <span className="text-[10px] tabular-nums">
               {banglaTime(utcDate)}
             </span>
           </div>
