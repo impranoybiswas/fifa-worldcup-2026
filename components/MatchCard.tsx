@@ -46,29 +46,21 @@ export default function MatchCard({ match }: { match: Match }) {
   return (
     <div
       data-aos="fade-up"
-      className="group relative w-full mx-auto bg-white dark:bg-zinc-900 border border-slate-100 dark:border-white/5 rounded-2xl overflow-hidden hover:shadow-xl hover:border-blue-500/20 transition-all duration-500"
+      className="group relative w-full mx-auto bg-white dark:bg-zinc-900 border border-slate-200 dark:border-white/5 rounded-2xl overflow-hidden hover:shadow-xl hover:border-blue-500/20 transition-all duration-500 shadow-sm"
     >
       {/* Top Meta Row */}
-      <div className="flex items-center justify-between px-4 py-3 bg-slate-50/50 dark:bg-white/2 border-b border-slate-100 dark:border-white/5">
+      <div className="flex items-center justify-between px-4 py-3 bg-slate-50 border-b border-slate-300 dark:border-white/5">
         <div className="flex items-center gap-2">
           <Trophy className="size-3 text-blue-500" />
           <span className="text-[8px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
             {stageLabel} {group && `· ${group.replace(/_/g, " ")}`}
           </span>
         </div>
-        <div className="flex items-center gap-3 text-slate-700 font-bold">
-          <div className="flex items-center gap-1.5 ">
-            <Calendar className="w-3 h-3" />
-            <span className="text-[10px] tabular-nums ">
-              {banglaDate(utcDate)}
-            </span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <Clock className="w-3 h-3" />
-            <span className="text-[10px] tabular-nums">
-              {banglaTime(utcDate)}
-            </span>
-          </div>
+        <div className="flex items-center gap-1 text-slate-700 font-bold text-xs tabular-nums">
+          <Calendar size={12} />
+          <span className="pr-2">{banglaDate(utcDate)}</span>
+          <Clock size={12} />
+          <span>{banglaTime(utcDate)}</span>
         </div>
       </div>
 
@@ -84,7 +76,7 @@ export default function MatchCard({ match }: { match: Match }) {
         {/* Score / Status */}
         <div className="flex flex-col items-center justify-center min-w-[80px]">
           {isScheduled ? (
-            <div className="text-2xl font-black text-slate-100 dark:text-white/5 tracking-tighter select-none">
+            <div className="text-2xl font-black text-slate-300 tracking-tighter select-none">
               VS
             </div>
           ) : (
@@ -119,12 +111,10 @@ export default function MatchCard({ match }: { match: Match }) {
 
       {/* Referee Footer */}
       {referees && referees.length > 0 && (
-        <div className="px-4 py-2 bg-slate-50/30 dark:bg-white/1 border-t border-slate-100 dark:border-white/5 flex items-center justify-center gap-2">
+        <div className="px-4 py-2 bg-slate-50/50 dark:bg-white/1 border-t border-slate-200 dark:border-white/5 flex items-center justify-center gap-2 text-[10px]">
           <UserCheck className="w-3 h-3 text-slate-300" />
-          <span className="text-[9px] font-medium text-slate-400">
-            Match Referee:{" "}
-          </span>
-          <span className="text-[9px] font-bold text-slate-500 dark:text-slate-300">
+          <span className="font-medium text-slate-400">Match Referee: </span>
+          <span className="font-bold text-slate-500 dark:text-slate-300">
             {referees[0].name}{" "}
             {referees[0].nationality && `(${referees[0].nationality})`}
           </span>
@@ -145,7 +135,7 @@ function TeamDisplay({
 }) {
   return (
     <div
-      className={`flex flex-col items-center gap-2 flex-1 min-w-0 ${isLoser ? "opacity-40" : "opacity-100"} transition-all duration-300`}
+      className={`flex flex-col items-center gap-2 flex-1 min-w-0 ${isLoser ? "opacity-50" : "opacity-100"} transition-all duration-300`}
     >
       <div className="relative w-14 h-9 overflow-hidden rounded-lg border border-slate-100 dark:border-white/5 bg-slate-50 dark:bg-white/5 grid place-items-center group-hover:scale-105 transition-transform">
         {team.crest ? (

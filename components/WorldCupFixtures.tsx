@@ -132,7 +132,7 @@ export default function WorldCupFixtures() {
   return (
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-1">
-        <div className="flex flex-col" data-aos="fade-right">
+        <div className="flex flex-col items-center md:items-start" data-aos="fade-right">
           <h2 className="text-xl font-bold tracking-tight">
             সব ম্যাচের সময়সূচী
           </h2>
@@ -165,7 +165,7 @@ export default function WorldCupFixtures() {
             ))}
           </select>
           <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-30 group-hover:opacity-100 transition-opacity">
-           <ArrowDownIcon className="w-4 h-4"/>
+            <ArrowDownIcon className="w-4 h-4" />
           </div>
         </div>
       </div>
