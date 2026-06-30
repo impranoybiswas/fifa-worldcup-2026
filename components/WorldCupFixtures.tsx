@@ -75,6 +75,8 @@ export default function WorldCupFixtures() {
     },
   });
 
+  console.log(matches)
+
   const teams = useMemo(() => {
     if (!matches) return [];
     const teamSet = new Set<string>();

@@ -1,10 +1,11 @@
 "use client";
 
 import { teamInBangla } from "@/lib/team-bangla";
-import { banglaDate, banglaTime } from "@/lib/bangla-date";
+
 import { Match } from "@/types/match";
 import Image from "next/image";
 import { Calendar, Clock, Trophy, Users, UserCheck } from "lucide-react";
+import { customBanglaTime } from "@/lib/bangla-date";
 
 export default function MatchCard({ match }: { match: Match }) {
   // Safety check — bail early if match data is missing
@@ -35,6 +36,10 @@ export default function MatchCard({ match }: { match: Match }) {
       ? "Full time"
       : "Upcoming";
 
+  //check if match in tiebreak
+  const isTieBreak =
+    score.duration === "PENALTY_SHOOTOUT" ? "(On Penalties)" : null;
+
   // Formatted stage string — e.g. "GROUP_STAGE" → "Group stage"
   const stageLabel = stage
     ? stage
@@ -58,9 +63,9 @@ export default function MatchCard({ match }: { match: Match }) {
         </div>
         <div className="flex items-center gap-1 text-slate-700 font-bold text-xs tabular-nums">
           <Calendar size={12} />
-          <span className="pr-2">{banglaDate(utcDate)}</span>
+          <span className="pr-2">{customBanglaTime(utcDate).dateStr}</span>
           <Clock size={12} />
-          <span>{banglaTime(utcDate)}</span>
+          <span>{customBanglaTime(utcDate).timeStr}</span>
         </div>
       </div>
 
@@ -99,6 +104,11 @@ export default function MatchCard({ match }: { match: Match }) {
             isLive={isLive}
             isScheduled={isScheduled}
           />
+          {isTieBreak && (
+            <span className="text-[10px] font-bold text-blue-500 uppercase mt-1">
+              {isTieBreak}
+            </span>
+          )}
         </div>
 
         {/* Away Team */}

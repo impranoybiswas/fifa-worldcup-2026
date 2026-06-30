@@ -1,31 +1,30 @@
-const banglaDate = (dateString: string) => {
+export function customBanglaTime(dateString: string): { dateStr: string; timeStr: string } {
   const date = new Date(dateString);
-  return date.toLocaleDateString("bn-BD", {
+
+  const hour = date.getHours();
+  if (hour >= 0 && hour < 4) {
+    date.setDate(date.getDate() - 1);
+  }
+
+  const dateStr = date.toLocaleDateString("bn-BD", {
     month: "long",
     day: "numeric",
     timeZone: "Asia/Dhaka",
     calendar: "bengali",
   });
-};
 
-const banglaTime = (dateString: string): string => {
-  const date = new Date(dateString);
-
-  const time = date.toLocaleTimeString("bn-BD", {
+  let timeStr = date.toLocaleTimeString("bn-BD", {
     hour: "numeric",
-    hour12: true,
     minute: "numeric",
+    hour12: true,
     dayPeriod: "short",
     timeZone: "Asia/Dhaka",
     calendar: "bengali",
   });
 
-  //change রাত্রি to রাত
-  if (time.includes("রাত্রি")) {
-    return time.replace("রাত্রি", "রাত").split(" ").reverse().join(" ");
+  if (timeStr.includes("রাত্রি")) {
+    timeStr = timeStr.replace("রাত্রি", "রাত");
   }
 
-  return time.split(" ").reverse().join(" ");
-};
-
-export { banglaDate, banglaTime };
+  return { dateStr, timeStr };
+}
